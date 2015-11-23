@@ -1,0 +1,115 @@
+<html>
+<head>
+  <title>Party Particles</title>
+  <style>
+  canvas {
+    background: #000;
+    display: block;
+    margin: 25px auto;
+  }
+  p {
+    font-family: arial;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<div>
+<p><strong>Currently displaying: <b><span id="max">500</span></b> particles.</strong></p>
+<p>Click Canvas to add 10% more particles.</p>
+</div>
+<script>
+var particle = document.getElementById('particles');
+
+function resize() {
+  particle.width = window.innerWidth - (window.innerWidth / 10);
+  particle.height = window.innerHeight - (window.innerHeight / 2.5);
+  Width = particle.width;
+  Height = particle.height;
+}
+resize();
+
+var context = particle.getContext('2d');
+var PI = Math.PI;
+var Width = particle.width;
+var Height = particle.height;
+var limit = 500;
+
+var orbs = [];
+
+function init() {
+  for(var i = 0; i < limit; i++) {
+    orbs[i] = {
+      s:Math.random()*9+1,
+      x:Math.random()*Width-300,
+      y:Math.random()*Height-200
+    };
+
+    if(orbs[i].s < 3){
+      orbs[i].particle = '#cc00cc'; orbs[i].r = Math.random()*3+1;
+    }
+    else if(orbs[i].s < 5){
+      orbs[i].particle = '#0000ff'; orbs[i].r = Math.random()*4+2;
+    }
+    else if(orbs[i].s < 7){
+      orbs[i].particle = '#00cc00'; orbs[i].r = Math.random()*5+2;
+    }
+    else if(orbs[i].s < 8){
+      orbs[i].particle = '#ffff00'; orbs[i].r = Math.random()*6+2;
+    }
+    else {
+      orbs[i].particle = '#ff0000'; orbs[i].r = Math.random()*8+2;
+    }
+  }
+}
+init();
+
+function draw() {
+   context.clearRect(0, 0, Width, Height);
+   var len = orbs.length;
+
+   for(var i = 0; i < len; i++) {
+      context.fillStyle = orbs[i].particle;
+      context.beginPath();
+      orbs[i].x += orbs[i].s * 1.4 + 3;
+      orbs[i].y += orbs[i].s * 0.1 + 5;
+
+      if(orbs[i].x > Width + 100 || orbs[i].x < -100){
+        orbs[i].s = -orbs[i].s; orbs[i].x = -50;
+      }
+      if(orbs[i].y > Height + 100 || orbs[i].y < -100){
+        orbs[i].s = -orbs[i].s; orbs[i].y = -50;
+      }
+
+      context.arc(orbs[i].x, orbs[i].y, orbs[i].r, 0, 2*PI);
+      context.fill();
+   }
+setTimeout(draw, 10);
+}
+
+window.onresize = resize;
+draw();
+
+particle.onclick = function(){
+  limit *= 1.10;
+  init();
+  document.getElementById('max').innerHTML = parseInt(limit);
+};
+
+function rotate(rotater){
+  var a=800;
+  var b=6500;
+  var c=$("#"+rotater+" li:last-child");
+  var d=$(c).css("width");
+        $(c).animate({opacity:.2},a,
+    function(){
+      $("#"+rotater+" li:first-child").before($(c));
+      $(c).show();
+      $(c).css({opacity:1});
+      setTimeout(function(){rotate(rotater)},b)})
+}
+
+</script>
+</body>
+</html>
